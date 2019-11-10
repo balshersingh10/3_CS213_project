@@ -1,0 +1,59 @@
+{% extends "admin/base_site.html" %}
+
+{% block branding %}
+<h1 id="site-name">{{ site_header|default:_('Online Attendence System') }}</h1>
+{% endblock %}
+
+{% block usertools %}
+<div id="user-tools">
+    {% block welcome-msg %}
+        Welcome
+        <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+    {% endblock %}
+    {% block userlinks %}
+        {% if user.is_active and user.is_staff %}
+            {% url 'django-admindocs-docroot' as docsroot %}
+
+        {% endif %}
+        {% if user.has_usable_password %}
+        <a href="{% url 'admin:password_change' %}">Change password</a> /
+        {% endif %}
+        <a href="{% url 'admin:logout' %}">Log out</a>
+    {% endblock %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+
+
+
+    {% if error2 %}
+      <p class="errornote">{{error2}}</p>
+    {% endif %}
+    {% if m %}
+      <p class="errornote">{{m}}</p>
+    {% endif %}
+
+
+
+    {{block.super}}
+    <div>
+        <form  action="{% url 'find_stat_roll' %}" method="post">
+          {% csrf_token %}
+          Search by Roll Number <input type="text" name="rollno" placeholder="Enter Roll Number">
+          Course Code <input type="text" name="code" placeholder="Of Which Course">
+          From: <input type="date" name="from">
+          To: <input type="date" name="to">
+          <input type="submit" value="Search">
+        </form>
+        <br>-----------------------------------------------------------------<br><br>
+        <form  action="{% url 'find_stat_code' %}" method="post">
+          {% csrf_token %}
+          Search by Course Code <input type="text" name="course" placeholder="Enter Course Code">
+          From: <input type="date" name="from">
+          To: <input type="date" name="to">
+          <input type="submit" value="Search">
+        </form>
+        
+    </div>
+{% endblock %}

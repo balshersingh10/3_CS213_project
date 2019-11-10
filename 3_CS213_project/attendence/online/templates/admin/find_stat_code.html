@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+
+
+{% block branding %}
+<h1 id="site-name">{{ site_header|default:_('Online Attendence System') }}</h1>
+{% endblock %}
+
+{% block usertools %}
+<div id="user-tools">
+    {% block welcome-msg %}
+        Welcome
+        <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+    {% endblock %}
+    {% block userlinks %}
+        {% if user.is_active and user.is_staff %}
+            {% url 'django-admindocs-docroot' as docsroot %}
+
+        {% endif %}
+        {% if user.has_usable_password %}
+        <a href="{% url 'admin:password_change' %}">Change password</a> /
+        {% endif %}
+        <a href="{% url 'admin:logout' %}">Log out</a>
+    {% endblock %}
+</div>
+{% endblock %}
+
+
+
+{% block sidebar %}
+
+<script type="text/javascript">
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var row_count = document.getElementById("table").rows.length;
+    for(var i=1;i<row_count;i++){
+      i = i.toString();
+      var x= document.getElementById(i);
+      var idd = i.concat("pc");
+      var y = document.getElementById(idd).innerHTML;
+      if(parseInt(y)<=80){
+        x.style.color = "red";
+      }
+    }
+  })
+
+
+  var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+      , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+      , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+      , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(table, name) {
+      if (!table.nodeType) table = document.getElementById(table)
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = uri + base64(format(template, ctx))
+    }
+  })()
+
+
+
+</script>
+
+
+
+
+
+    {% if not a_date %}
+      <p class="errornote"> No Attendence is recorded during this period</p>
+    {% endif %}
+
+    {% if a_date %}
+
+    <h1>Course : {{c}}</h1>
+    <a href="{% url 'defaulter' c %}">See defaulter</a>
+    <br><br>
+    <input type="button" onclick="tableToExcel('table', 't')" value="Export to Excel">
+    <table border="2px solid black" id="table" name="t">
+      <tr>
+        <th>Rollno.</th>
+        <th>Total Attendence(%)</th>
+        {% for d in a_date %}
+          <th id="{{d.date}}">{{d.date}}</th>
+        {% endfor %}
+      </tr>
+      {% for s in roll %}
+        <tr id="{{forloop.counter}}">
+          <td>{{s.rollno}}</td>
+          <td id="{{forloop.counter}}pc">{% for p in pc %}
+              {% ifequal p.1 s.rollno %}
+               {{ p.0 }}
+              {% endifequal %}
+              {% endfor %}
+          </td>
+          {% for d in a_date %}
+            <td header="{{d.date}}">{% for a in all %}
+                      {% ifequal d.date a.date %}
+                      {% ifequal s.rollno a.rollno %}
+                        {{a.present}}
+                        {% endifequal %}
+                      {% endifequal %}
+                      {% endfor %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+{% endblock %}

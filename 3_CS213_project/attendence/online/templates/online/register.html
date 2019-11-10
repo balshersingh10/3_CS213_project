@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'index' %}"> Home</a>
+</div>
+{% endblock %}
+
+
+      {% block branding %}
+      <h1 id="site-name">{{ site_header|default:_('Online Attendence System') }}</a></h1>
+      {% endblock %}
+
+      {% block usertools %}
+      <div id="user-tools">
+        {% block welcome-msg %}
+            <strong>WELCOME,{{user.first_name}}</strong>
+        {% endblock %}
+        {% block userlinks %}
+         <a href="{% url 'register' %}">Register new course</a>/<a href="{% url 'logout_view' %}">Log out</a>
+        {% endblock %}
+      </div>
+      {% endblock %}
+
+{% block sidebar %}
+    <form action="{% url 'register_course' %}" method="post">
+      {% csrf_token %}
+      <h1>Course Code  : <input type="text" name="code"></h1><br>
+      <h1>Course Name  : <input type="text" name="name"></h1> <br>
+    <h1>Department: <input type="text" list="department" name="department" placeholder="Choose Department"></h1>
+      <p>To add more than one department type all the department seperated by white space. For example "CSE ME"</p>
+        <datalist id="department">
+            <option value="CSE"></option>
+            <option value="ME"></option>
+            <option value="EE"></option>
+        </datalist><br>
+      <h1>Semester: <input type="number" name="sem"></h1><br>
+      <input type="submit" value="Register">
+    </form>
+
+
+
+    {% if message %}
+     <div>
+       <h3>{{message}}</h3><br>
+       Faculty currently under {{code}}
+        <ul>
+          {% for i in info %}
+          <li>{{i.f_name}} {{i.l_name}}</li>
+          {% endfor %}
+        </ul>
+        <form action="{% url 'join_course' code %}" method="post">
+          {% csrf_token %}
+          Join this course <input type="submit" value="Join">
+        </form>
+     </div>
+
+    {%endif%}
+    {% endblock %}

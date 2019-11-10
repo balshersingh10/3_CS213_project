@@ -1,0 +1,45 @@
+{% extends "admin/base.html" %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'index' %}"> Home</a>
+</div>
+{% endblock %}
+
+
+      {% block branding %}
+      <h1 id="site-name">{{ site_header|default:_('Online Attendence System') }}</h1>
+      {% endblock %}
+
+      {% block usertools %}
+      <div id="user-tools">
+        {% block welcome-msg %}
+            <strong>WELCOME,{{user.first_name}}</strong>
+        {% endblock %}
+        {% block userlinks %}
+         <a href="{% url 'register' %}">Register new course</a>/<a href="{% url 'logout_view' %}">Log out</a>
+        {% endblock %}
+      </div>
+      {% endblock %}
+
+{% block sidebar %}
+  {% if message2 %}
+  <p class="errornote">{{message2}}</p>
+  {% endif %}
+    {% if not courses %}
+      <h1>No Course is Register </h1>
+    {% endif %}
+    {% if courses %}
+    {% if message %}
+    <ul class="messagelist">
+      <li> {{ message }} </li>
+    </ul>
+    {% endif %}
+    <h1>Courses</h1>
+    <ol>
+    {% for course in courses %}
+      <h3><li><a href="{% url 'course_detail' course.id %}">{{course.course_code}}</a></li></h3>
+    {% endfor %}
+    </ol>
+    {% endif %}
+{% endblock %}

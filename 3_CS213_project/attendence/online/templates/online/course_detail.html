@@ -1,0 +1,84 @@
+{% extends "admin/base.html" %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'index' %}"> Home</a>
+</div>
+{% endblock %}
+
+
+      {% block branding %}
+      <h1 id="site-name">{{ site_header|default:_('Online Attendence System') }}</a></h1>
+      {% endblock %}
+
+      {% block usertools %}
+      <div id="user-tools">
+        {% block welcome-msg %}
+            <strong>WELCOME,{{user.first_name}}</strong>
+        {% endblock %}
+        {% block userlinks %}
+         <a href="{% url 'register' %}">Register new course</a>/<a href="{% url 'logout_view' %}">Log out</a>
+        {% endblock %}
+      </div>
+      {% endblock %}
+
+
+      {% block sidebar %}
+
+      {% if m %}
+        <p class="errornote"> {{m}} </p>
+      {% endif %}
+      
+      {% if err %}
+      <p class="errornote">  {{err}}{{diff}} min. </p>
+      {% endif %}
+
+      {% if message %}
+        <ul class="messagelist">
+          <li>{{message}}</li>
+        </ul>
+      {% endif %}
+
+      <form action="{% url 'view_fac'  course_id %}" method="post">
+        {% csrf_token %}
+        <h3>View Attendence History</h3>
+        From : <input type="date" name="from">
+        To : <input type="date" name="to">
+        <input type="submit" value="View">
+      </form>
+      <br>
+
+
+      {% if not students %}
+      <h1>No Students are Enrolled in this Course </h1>
+      {% endif %}
+
+
+      {% if students %}
+      <h3>Mark Today's Attendence</h3>
+    <table>
+         <form id="myform" action="{% url 'mark_attendence' course_id %}" method="post">
+            {% csrf_token %}
+            <tr>
+              <th>S.No</th>
+              <th>Roll Number</th>
+              <th>Attendence</th>
+            </tr>
+      {% for student in students %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>  {{student.rollno}}</td>
+
+      <td>         <input type="radio" name="{{ student.rollno }}" value="Present">Present
+                   <input type="radio" name="{{ student.rollno }}" value="Absent">Absent
+      </td>
+    </tr>
+
+
+      {% endfor %}
+         </form>
+    </table>
+    <input type="submit" form="myform" value="Save Attendence">
+
+{% endif %}
+  {% endblock %}

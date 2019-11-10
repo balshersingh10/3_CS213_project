@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'index' %}"> Home</a>
+</div>
+{% endblock %}
+
+
+
+      {% block branding %}
+      <h1 id="site-name">{{ site_header|default:_('Online Attendence System') }}</a></h1>
+      {% endblock %}
+      {% block usertools %}
+      <div id="user-tools">
+
+
+        {% block welcome-msg %}
+            <strong>WELCOME,{{user.first_name}}/{{user.username}}</strong>
+        {% endblock %}
+        {% block userlinks %}
+         <a href="{% url 'enroll' %}">Enroll new course</a>/<a href="{% url 'logout_view' %}">Log out</a>
+
+        {% endblock %}
+      </div>
+      {% endblock %}
+
+
+{% block sidebar %}
+{% if empty %}
+  <h1>No course is available for you.</h1>
+{% endif %}
+
+{% if not empty %}
+<h1>Courses Available for you</h1>
+
+<form id="myform" action="{% url 'enroll_course'  %}" method="post">
+  {% csrf_token %}
+  <table border="3px solid black">
+    <tr>
+      <th>Course</th>
+      <th>Enroll</th>
+    </tr>
+      {% for i in course %}
+      <tr>
+        <td>{{i.course_code}}-{{i.course_name}}</td>
+        <td><input type="checkbox" name="{{i.course_code}}" value="Truee"></td>
+    </tr>
+      {% endfor %}
+
+  </table>
+</form>
+<input form="myform" type="submit" value="Save">
+{% endif %}
+
+{% endblock %}

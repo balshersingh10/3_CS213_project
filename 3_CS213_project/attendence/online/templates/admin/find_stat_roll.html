@@ -1,0 +1,68 @@
+{% extends "admin/base.html" %}
+
+{% block branding %}
+<h1 id="site-name">{{ site_header|default:_('Online Attendence System') }}</h1>
+{% endblock %}
+
+{% block usertools %}
+<div id="user-tools">
+    {% block welcome-msg %}
+        Welcome
+        <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+    {% endblock %}
+    {% block userlinks %}
+        {% if user.is_active and user.is_staff %}
+            {% url 'django-admindocs-docroot' as docsroot %}
+
+        {% endif %}
+        {% if user.has_usable_password %}
+        <a href="{% url 'admin:password_change' %}">Change password</a> /
+        {% endif %}
+        <a href="{% url 'admin:logout' %}">Log out</a>
+    {% endblock %}
+</div>
+{% endblock %}
+
+
+
+{% block sidebar %}
+
+    {{block.super}}
+
+  <script type="text/javascript">
+    var tableToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,'
+    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+  return function(table, name) {
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+    window.location.href = uri + base64(format(template, ctx))
+  }
+})()
+
+  </script>
+  <h1>Roll Number: {{r}}</h1>
+
+  {% if low %}
+    <p class="errornote">{{low}}</p>
+  {% endif %}
+
+      <h1>Net Attendence: {{ percent }}%</h1>
+      <input type="button" onclick="tableToExcel('table', 't')" value="Export to Excel">
+    <table border="2px solid black" id="table" name="t">
+      <tr>
+        <th>Date</th>
+        <th>Attendence</th>
+      </tr>
+
+      {% for i in list%}
+      <tr>
+        <td>{{ i.date }}</td>
+        <td>{{ i.present }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+{% endblock %}

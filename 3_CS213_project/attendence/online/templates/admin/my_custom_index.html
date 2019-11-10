@@ -1,0 +1,16 @@
+{% extends "admin/index.html" %}
+
+
+
+
+{% block branding %}
+<h1 id="site-name">{{ site_header|default:_('Online Attendence System') }}</h1>
+{% endblock %}
+
+{% block sidebar %}
+    {{block.super}}
+    <div>
+        <a href="{% url 'stats' %}">Statistic of Attendence</a>
+    </div>
+
+{% endblock %}
