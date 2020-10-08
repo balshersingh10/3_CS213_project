@@ -1,4 +1,4 @@
-![Online Attendance Sysytem](https://www.edecofy.com/blog/wp-content/uploads/2019/09/school-attenadance-management-01-1024x555.png)
+![Online Attendance Sysytem](image/CoverPic.jpeg)
 # Online Attendance System Using Django
 Using this system, Professor can mark attendance easily and automatically store it on a Database.
 ## Requirement
